@@ -31,8 +31,8 @@ export interface Product {
 
 export type NewProductInput = Omit<Product, 'id'>;
 
-// Fictional products with photos hosted in ImageKit. The local artwork stays as
-// the fallback for any product without a photo.
+// Fictional products with photos, and two with videos, hosted in ImageKit. The
+// local artwork stays as the fallback for any product without a photo.
 export const seedProducts: Product[] = [
   {
     id: 'everyday-tote',
@@ -51,6 +51,14 @@ export const seedProducts: Product[] = [
       mediaType: 'image',
       width: 1200,
       height: 1800,
+    },
+    video: {
+      fileId: '6ac7cb03ead997d09a09b28c',
+      filePath: '/products/BF41FBB9-8C47-4E0E-A95C-4024A1211B27_qk5dv6oLG.mp4',
+      url: 'https://ik.imagekit.io/cwb/products/BF41FBB9-8C47-4E0E-A95C-4024A1211B27_qk5dv6oLG.mp4',
+      mediaType: 'video',
+      width: 1280,
+      height: 720,
     },
   },
   {
@@ -89,6 +97,14 @@ export const seedProducts: Product[] = [
       mediaType: 'image',
       width: 1200,
       height: 1800,
+    },
+    video: {
+      fileId: '6ac7c8abead997d09a00ff34',
+      filePath: '/products/water-bottle-demo_uKC-vOKex.mp4',
+      url: 'https://ik.imagekit.io/cwb/products/water-bottle-demo_uKC-vOKex.mp4',
+      mediaType: 'video',
+      width: 1280,
+      height: 720,
     },
   },
 ];

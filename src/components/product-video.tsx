@@ -1,8 +1,10 @@
+import { useEventListener } from 'expo';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
-import { useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import { useVideoPlayer, VideoView, type VideoSource } from 'expo-video';
+import { useCallback, useRef, useState } from 'react';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ProductMedia } from '@/components/product-media';
 import { palette } from '@/constants/store-theme';
@@ -13,9 +15,12 @@ import {
   MAX_VIDEO_SECONDS,
   photoFormatLabel,
   resolveVideoMimeType,
+  videoHlsUrl,
+  videoPlaybackUrl,
   videoThumbnail,
+  type MediaAsset,
 } from '@/data/media';
-import type { Product } from '@/data/products';
+import type { Product, ProductPlaceholder } from '@/data/products';
 import { uploadProductMedia } from '@/data/upload-media';
 
 type VideoError = { message: string; offerSettings?: boolean };
@@ -28,6 +33,8 @@ export function ProductVideo({ product }: { product: Product }) {
   const { attachVideo } = useProducts();
   const [status, setStatus] = useState<'idle' | 'picking' | 'uploading'>('idle');
   const [error, setError] = useState<VideoError | null>(null);
+  // The URL being played inline. A replaced video goes back to its poster.
+  const [playingUrl, setPlayingUrl] = useState<string | null>(null);
   const [libraryPermission, requestLibraryPermission] = ImagePicker.useMediaLibraryPermissions();
   const busy = useRef(false);
   const { video } = product;
@@ -130,12 +137,18 @@ export function ProductVideo({ product }: { product: Product }) {
 
   return (
     <View style={styles.section}>
-      {video ? (
-        // Plays the hosted MP4 in the system browser until the app has a player.
+      {video && playingUrl === video.url ? (
+        <InlineVideo
+          video={video}
+          placeholder={product.placeholder}
+          label={`${product.name} video`}
+        />
+      ) : video ? (
+        // The poster costs one small image; the video loads only when played.
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Play ${product.name} video`}
-          onPress={() => WebBrowser.openBrowserAsync(video.url)}
+          onPress={() => setPlayingUrl(video.url)}
           style={({ pressed }) => pressed && styles.pressed}
         >
           <ProductMedia
@@ -191,8 +204,73 @@ export function ProductVideo({ product }: { product: Product }) {
   );
 }
 
+/** Plays the hosted MP4 in the app with native controls, starting right away. */
+function InlineVideo({
+  video,
+  placeholder,
+  label,
+}: {
+  video: MediaAsset;
+  placeholder: ProductPlaceholder;
+  label: string;
+}) {
+  // Native players stream HLS and pick a rendition for the connection. Web
+  // keeps the MP4, since Chrome's <video> doesn't play HLS on its own.
+  const source: VideoSource =
+    Platform.OS === 'web'
+      ? videoPlaybackUrl(video)
+      : { uri: videoHlsUrl(video), contentType: 'hls' };
+  const player = useVideoPlayer(source, (created) => created.play());
+  const [showingFrame, setShowingFrame] = useState(false);
+  const fellBack = useRef(false);
+
+  // A new upload's stream answers 202 until its renditions are ready, which
+  // the player reports as an error. The MP4 plays in the meantime.
+  useEventListener(player, 'statusChange', ({ status }) => {
+    if (status !== 'error' || fellBack.current || Platform.OS === 'web') return;
+    fellBack.current = true;
+    player
+      .replaceAsync(videoPlaybackUrl(video))
+      .then(() => player.play())
+      .catch((error: unknown) => console.warn('[product-video] MP4 fallback failed.', error));
+  });
+
+  // Screens stay mounted under the next one in the stack, so stop the sound
+  // when the user navigates away.
+  useFocusEffect(useCallback(() => () => player.pause(), [player]));
+
+  return (
+    <View style={[styles.frame, styles.player]}>
+      <VideoView
+        player={player}
+        nativeControls
+        contentFit="contain"
+        fullscreenOptions={{ enable: true }}
+        accessibilityLabel={label}
+        onFirstFrameRender={() => setShowingFrame(true)}
+        style={styles.fill}
+      />
+      {!showingFrame && (
+        // expo-video has no poster, so keep ours up until the first frame draws.
+        <View style={[styles.fill, styles.cover]}>
+          <ProductMedia
+            placeholder={placeholder}
+            photo={videoThumbnail(video)}
+            label=""
+            style={styles.frame}
+          />
+          <ActivityIndicator color="#FFFFFF" style={styles.fill} />
+        </View>
+      )}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   section: { marginTop: 10, gap: 12 },
+  player: { borderRadius: 18, overflow: 'hidden', backgroundColor: '#000000' },
+  fill: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 },
+  cover: { pointerEvents: 'none' },
   frame: { width: '100%', aspectRatio: 16 / 9, minHeight: 160, maxHeight: 340 },
   placeholder: {
     backgroundColor: '#EBEDE5',

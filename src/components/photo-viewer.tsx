@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
   tabSelected: { backgroundColor: viewer.text, borderColor: viewer.text },
   tabText: { color: viewer.muted, fontSize: 12, fontWeight: '500', textAlign: 'center' },
   tabTextSelected: { color: viewer.background, fontWeight: '600' },
-  prompt: { color: viewer.muted, fontSize: 12, lineHeight: 18, textAlign: 'center' },
+  // Room for two lines, so the switcher stays put when the note changes length.
+  prompt: { color: viewer.muted, fontSize: 12, lineHeight: 18, minHeight: 36, textAlign: 'center' },
   pressed: { opacity: 0.7 },
 });
