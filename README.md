@@ -1,56 +1,44 @@
-# Welcome to your Expo app 👋
+# form & field
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A fictional storefront built with React Native, Expo, and Expo Router for the ImageKit tutorial. This is the application skeleton: a small product catalog and the screens needed to introduce an image and video workflow.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run locally
 
 ```bash
-npm run reset-project
+bun install
+bun start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Use the Expo terminal shortcuts to open the app on your preferred target. For the web preview, run:
 
-### Other setup steps
+```bash
+bun run web
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Included
 
-## Learn more
+- A responsive catalog with search and category filters.
+- Three fictional products: Everyday Tote ($48), Studio Headphones ($129), and Trail Bottle ($32).
+- Product detail screens with descriptions, product specifications, related products, and a video placeholder.
+- An add-product form that previews a chosen JPG or PNG photo, falls back to the category placeholder, and updates the in-memory catalog.
 
-To learn more about developing your project with Expo, look at the following resources:
+Product data lives in `src/data/products.ts`. `ProductsProvider` in `src/context/products-context.tsx` owns the catalog state. Added products are **not persisted**: reloading the app restores the original three products.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Media integration
 
-## Join the community
+The product illustrations are local SVG placeholders in `assets/products/`. `ProductMedia` in `src/components/product-media.tsx` centralizes image rendering for the catalog, detail screen, and form preview: it draws a product's photo when there is one and falls back to the category illustration. It is the starting point for the upcoming ImageKit image integration. The detail screen also reserves a place for a product video.
 
-Join our community of developers creating universal apps.
+The add-product form picks a photo with `expo-image-picker` and stores it as a `MediaAsset` (`src/data/media.ts`). That record's fields mirror the ImageKit upload response, so a finished upload can fill in `fileId` and `filePath` and swap `url` from the on-device file to the hosted one. `Product` carries optional `photo` and `video` references built on the same type.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+ImageKit uploads, AI image transformations, video overlays, and video streaming are intentionally not implemented yet. No ImageKit credentials are required to run this skeleton.
+
+Checkout, payments, and inventory management are outside this demo's scope.
+
+## Checks
+
+```bash
+bunx tsc --noEmit
+bunx expo lint
+```
+
+Native device behavior should be checked on the intended recording device before production.

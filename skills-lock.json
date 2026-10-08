@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "skills": {
+    "ai-tasks": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ai-tasks/SKILL.md",
+      "computedHash": "349fad3469bf1d4a2f0af928bbde98122a1a05b0c11f326a90e04017ba1b972a"
+    },
+    "asset-access-control": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/asset-access-control/SKILL.md",
+      "computedHash": "8950b24802e7765bbe5457d244a1d659bf5dbfcc9080be13d88d54d03339c152"
+    },
+    "imagekit-integrations": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/imagekit-integrations/SKILL.md",
+      "computedHash": "96f16e51ed4fc49df89a8c9018d8daf56aaecfbb24c2486b3820b665361d311f"
+    },
+    "mcp-preflight": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/mcp-preflight/SKILL.md",
+      "computedHash": "b92ddb2675ba2d0c194bf8da9f91e8cd5adbe8d27b136395509a4c2bd91265bf"
+    },
+    "search-assets": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/search-assets/SKILL.md",
+      "computedHash": "0934f5a88b3b3e6cd2ef8b327dc1bad7251c3b6c1ed478bb90532b2579288e5b"
+    },
+    "search-docs": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/search-docs/SKILL.md",
+      "computedHash": "42b3c9b45d8eb83e74afb12d32ff05ffe1d4711233f4a9d3ccd5cd8d35d7292c"
+    },
+    "transformation-builder": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/transformation-builder/SKILL.md",
+      "computedHash": "fc642723b4afbc18dc3c14d0536a13b5e74999eed2818001abc55e4eef9fa149"
+    },
+    "upload-files": {
+      "source": "imagekit-developer/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upload-files/SKILL.md",
+      "computedHash": "93e627d66c944d251b1753014d1adcc216d6a4a45c0f05128fc8cde9bea86985"
+    }
+  }
+}
